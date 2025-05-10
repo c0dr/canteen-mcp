@@ -9,7 +9,7 @@ Canteen MCP is a FastMCP-based server that exposes a tool for retrieving daily l
 ## Features
 
 - Get lunch menu for any specific date
-- SSE-based transport for real-time communication
+- httpStream-based transport for real-time communication
 - Environment-based configuration
 - Type-safe API with input validation
 
@@ -33,7 +33,7 @@ cp .env.example .env
 |----------|-------------|---------|
 | API_URL | URL of the lunch menu API | https://lunch-menu-ai.vercel.app/api/v1/menu |
 | PORT | Port for the MCP server | 8080 |
-| SSE_ENDPOINT | Server-sent events endpoint | /sse |
+| ENDPOINT | HTTP endpoint | /endpoint |
 
 ## Usage
 
@@ -85,7 +85,7 @@ docker run -d \
   -p 8080:3000 \
   -e API_URL=your_api_url \
   -e PORT=3000 \
-  -e SSE_ENDPOINT=/sse \
+  -e ENDPOINT=/http \
   --name canteen-mcp \
   canteen-mcp
 ```
@@ -116,14 +116,14 @@ curl -fsSL https://get.docker.com | sh
 version: '3.8'
 services:
   canteen-mcp:
-    image: ghcr.io/[your-username]/canteen-mcp:latest
+    image: ghcr.io/c0dr/canteen-mcp:latest
     restart: always
     ports:
       - "8080:3000"
     environment:
       - API_URL=your_api_url
       - PORT=3000
-      - SSE_ENDPOINT=/sse
+      - ENDPOINT=/http
 ```
 
 4. Start the service:
