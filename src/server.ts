@@ -19,7 +19,7 @@ export function createServer(): FastMCP {
 
 // Function to validate environment variables
 export function validateEnvironment(): void {
-  const requiredEnvVars = ['API_URL', 'PORT', 'SSE_ENDPOINT'];
+  const requiredEnvVars = ['API_URL', 'PORT', 'ENDPOINT'];
   for (const envVar of requiredEnvVars) {
     if (!process.env[envVar] || process.env[envVar].trim() === '') {
       throw new Error(`Missing required environment variable: ${envVar}`);
@@ -61,10 +61,10 @@ export function initializeServer(): void {
   });
 
   server.start({
-    sse: {
-      endpoint: process.env.SSE_ENDPOINT as `/${string}`,
+    httpStream: {
+      endpoint: process.env.ENDPOINT as `/${string}`,
       port: parseInt(process.env.PORT!, 10),
     },
-    transportType: "sse",
+    transportType: "httpStream",
   });
 }

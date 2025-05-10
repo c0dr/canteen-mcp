@@ -11,8 +11,8 @@ vi.mock('fastmcp');
 // Mock environment variables
 const mockEnv = {
   API_URL: 'https://test-api.example.com/menu',
+  ENDPOINT: '/httpStream',
   PORT: '8080',
-  SSE_ENDPOINT: '/sse',
 };
 
 // Helper function to create mock server
@@ -149,7 +149,7 @@ describe('Canteen MCP Server', () => {
     });
   });
 
-  it('should start server with correct SSE configuration', async () => {
+  it('should start server with correct httpStream configuration', async () => {
     // Import the server module fresh
     const { initializeServer } = await import('./server');
     
@@ -157,11 +157,11 @@ describe('Canteen MCP Server', () => {
     initializeServer();
     
     expect(mockServer.start).toHaveBeenCalledWith({
-      sse: {
-        endpoint: mockEnv.SSE_ENDPOINT,
+      httpStream: {
+        endpoint: mockEnv.ENDPOINT,
         port: parseInt(mockEnv.PORT, 10),
       },
-      transportType: 'sse',
+      transportType: 'httpStream',
     });
   });
 });
