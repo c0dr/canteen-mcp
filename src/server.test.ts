@@ -2,7 +2,7 @@ import axios from 'axios';
 import { FastMCP } from 'fastmcp';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
-import { createServer, validateEnvironment } from './server.ts';
+import { createServer, validateEnvironment } from './server';
 
 // Mock modules
 vi.mock('axios');
@@ -105,7 +105,7 @@ describe('Canteen MCP Server', () => {
 
     it('should fetch menu data successfully', async () => {
       // Import the server module fresh for each test
-      const { initializeServer } = await import('./server.ts');
+      const { initializeServer } = await import('./server');
       initializeServer();
 
       // Verify tool was added with correct configuration
@@ -134,7 +134,7 @@ describe('Canteen MCP Server', () => {
 
     it('should have correct tool configuration', async () => {
       // Import the server module fresh for each test
-      const { initializeServer } = await import('./server.ts');
+      const { initializeServer } = await import('./server');
       initializeServer();
 
       expect(mockServer.addTool).toHaveBeenCalledWith(expect.objectContaining({
@@ -151,7 +151,7 @@ describe('Canteen MCP Server', () => {
 
   it('should start server with correct SSE configuration', async () => {
     // Import the server module fresh
-    const { initializeServer } = await import('./server.ts');
+    const { initializeServer } = await import('./server');
     
     // Initialize server
     initializeServer();
