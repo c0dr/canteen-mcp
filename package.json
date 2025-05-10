@@ -15,15 +15,11 @@
     "mcp",
     "boilerplate"
   ],
-  "repository": {
-    "url": "https://github.com/punkpeye/fastmcp-boilerplate"
-  },
-  "author": "Frank Fiegel <frank@glama.ai>",
-  "homepage": "https://glama.ai/mcp",
   "type": "module",
   "license": "MIT",
-  "description": "A boilerplate for FastMCP",
   "dependencies": {
+    "axios": "^1.9.0",
+    "dotenv": "^16.5.0",
     "fastmcp": "^1.27.3",
     "zod": "^3.24.4"
   },

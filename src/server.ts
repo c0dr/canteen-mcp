@@ -1,56 +1,70 @@
+import axios from "axios";
+import dotenv from "dotenv";
 import { FastMCP } from "fastmcp";
 import { z } from "zod";
 
-import { add } from "./add.js";
+// Load environment variables
+dotenv.config();
 
-const server = new FastMCP({
-  name: "Addition",
-  version: "1.0.0",
-});
+// Function to create and configure server
+export function createServer(): FastMCP {
+  // Validate environment before creating server
+  validateEnvironment();
 
-server.addTool({
-  annotations: {
-    openWorldHint: false, // This tool doesn't interact with external systems
-    readOnlyHint: true, // This tool doesn't modify anything
-    title: "Addition",
-  },
-  description: "Add two numbers",
-  execute: async (args) => {
-    return String(add(args.a, args.b));
-  },
-  name: "add",
-  parameters: z.object({
-    a: z.number().describe("The first number"),
-    b: z.number().describe("The second number"),
-  }),
-});
+  return new FastMCP({
+    name: "Breuni Kantine Helper",
+    version: "1.0.0",
+  });
+}
 
-server.addResource({
-  async load() {
-    return {
-      text: "Example log content",
-    };
-  },
-  mimeType: "text/plain",
-  name: "Application Logs",
-  uri: "file:///logs/app.log",
-});
+// Function to validate environment variables
+export function validateEnvironment(): void {
+  const requiredEnvVars = ['API_URL', 'PORT', 'SSE_ENDPOINT'];
+  for (const envVar of requiredEnvVars) {
+    if (!process.env[envVar] || process.env[envVar].trim() === '') {
+      throw new Error(`Missing required environment variable: ${envVar}`);
+    }
+  }
+}
 
-server.addPrompt({
-  arguments: [
-    {
-      description: "Git diff or description of changes",
-      name: "changes",
-      required: true,
+// Create the server instance
+export const server = createServer();
+
+// Function to configure and start the server
+export function initializeServer(): void {
+  server.addTool({
+    annotations: {
+      openWorldHint: true, // This tool interacts with external API
+      readOnlyHint: true, // This tool doesn't modify anything
+      title: "Lunch Menu",
     },
-  ],
-  description: "Generate a Git commit message",
-  load: async (args) => {
-    return `Generate a concise but descriptive commit message for these changes:\n\n${args.changes}`;
-  },
-  name: "git-commit",
-});
+    description: "Get the lunch menu from the canteen for a specific date",
+    execute: async (args) => {
+      try {
+        const response = await axios.get(process.env.API_URL!, {
+          params: { date: args.date }
+        });
+        return JSON.stringify(response.data, null, 2);
+      } catch (error) {
+        if (axios.isAxiosError(error)) {
+          throw new Error(`Failed to fetch menu: ${error.message}`);
+        }
+        throw error;
+      }
+    },
+    name: "get_lunch_menu",
+    parameters: z.object({
+      date: z.string()
+        .regex(/^\d{4}-\d{2}-\d{2}$/, "Date must be in YYYY-MM-DD format")
+        .describe("The date to get the menu for (YYYY-MM-DD)"),
+    }),
+  });
 
-server.start({
-  transportType: "stdio",
-});
+  server.start({
+    sse: {
+      endpoint: process.env.SSE_ENDPOINT as `/${string}`,
+      port: parseInt(process.env.PORT!, 10),
+    },
+    transportType: "sse",
+  });
+}
