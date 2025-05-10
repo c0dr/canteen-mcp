@@ -11,11 +11,8 @@ RUN npm ci
 # Copy source code
 COPY . .
 
-# Build TypeScript code
-RUN npm run build
-
 # Expose the port (will be configurable via env var)
 EXPOSE 3000
 
-# Start the server
-CMD ["node", "dist/server.js"]
+# Start the server using tsx (runs TypeScript directly)
+CMD ["npm", "start"]
