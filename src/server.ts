@@ -61,10 +61,10 @@ export function initializeServer(): void {
   });
 
   server.start({
-    sse: {
+    httpStream: {
       endpoint: process.env.ENDPOINT as `/${string}`,
       port: parseInt(process.env.PORT!, 10),
     },
-    transportType: "sse",
+    transportType: "httpStream",
   });
 }
