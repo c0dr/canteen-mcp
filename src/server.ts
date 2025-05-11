@@ -54,17 +54,15 @@ export function initializeServer(): void {
     },
     name: "get_lunch_menu",
     parameters: z.object({
-      date: z.string()
-        .regex(/^\d{4}-\d{2}-\d{2}$/, "Date must be in YYYY-MM-DD format")
-        .describe("The date to get the menu for (YYYY-MM-DD)"),
+      date: z.string().date(),
     }),
   });
 
   server.start({
-    httpStream: {
+    sse: {
       endpoint: process.env.ENDPOINT as `/${string}`,
       port: parseInt(process.env.PORT!, 10),
     },
-    transportType: "httpStream",
+    transportType: "sse",
   });
 }
